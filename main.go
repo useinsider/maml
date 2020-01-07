@@ -95,7 +95,11 @@ func applyPatch(base, patch map[string]interface{}) {
 					}
 					applyPatch(vvvv, vvvt)
 				default:
-					base[k] = vvvt
+					if len(vv) <= i {
+						vv = append(vv, vvvt)
+					} else {
+						vv[i] = vvvt
+					}
 				}
 			}
 			base[k] = vv
