@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,6 +12,16 @@ import (
 func main() {
 
 	files := os.Args[1:]
+
+	if len(files) == 0 {
+		scanner := bufio.NewScanner(os.Stdin)
+		for scanner.Scan() {
+			files = append(files, scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			panic(err)
+		}
+	}
 
 	baseFile, others := files[0], files[1:]
 
