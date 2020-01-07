@@ -90,11 +90,12 @@ func applyPatch(base, patch map[string]interface{}) {
 			if !ok {
 				vv = make([]interface{}, len(vt))
 			}
+			isAppend := false
 			for i, vvv := range vt {
 				switch vvvt := vvv.(type) {
 				case map[string]interface{}:
 					var vvvv map[string]interface{}
-					if len(vv) <= i {
+					if isAppend || len(vv) <= i {
 						vvvv = make(map[string]interface{})
 						vv = append(vv, vvvv)
 					} else {
@@ -106,7 +107,16 @@ func applyPatch(base, patch map[string]interface{}) {
 					}
 					applyPatch(vvvv, vvvt)
 				default:
-					if len(vv) <= i {
+					if vvvv, ok := vvv.(string); ok {
+						if vvvv == "maml_skip" {
+							continue
+						}
+						if i == 0 && vvvv == "maml_append" {
+							isAppend = true
+							continue
+						}
+					}
+					if isAppend || len(vv) <= i {
 						vv = append(vv, vvvt)
 					} else {
 						vv[i] = vvvt
